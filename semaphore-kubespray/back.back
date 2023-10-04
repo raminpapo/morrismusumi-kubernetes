@@ -9,8 +9,8 @@ services:
       context: .
     image: semaphore-kubespsray:1.0
     container_name: semaphore-kubespsray
-    networks:
-      - my_custom_network    
+    networks: 
+     - my_custom_network
     environment:
       SEMAPHORE_DB_USER: semaphore
       SEMAPHORE_DB_PASS: semaphore
@@ -41,9 +41,8 @@ services:
     restart: unless-stopped
     image: mysql:8.0
     hostname: mysql
-    container_name: mysql
-    networks:
-      - my_custom_network
+    networks: 
+     - my_custom_network
     volumes:
       - semaphore-mysql:/var/lib/mysql
     environment:
@@ -59,19 +58,27 @@ services:
 
   nginx:
     image: nginx:latest
-    networks:
-      - my_custom_network
+    container_name: nginx
+    networks: 
+     - my_custom_network
     ports:
       - "80:80"
       - "443:443"
     volumes:
       - ./nginx:/etc/nginx/conf.d
-      - ./certs:/etc/ssl/certs
+      - ./certs:/etc/
 
+  certbot:
+    image: certbot/certbot
+    volumes:
+      - ./certs:/etc/letsencrypt
 
 networks:
   my_custom_network:
-    driver: bridge
+    #driver: bridge
+    external: true
+
+
 
 volumes:
   semaphore-mysql:
